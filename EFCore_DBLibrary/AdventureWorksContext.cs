@@ -10,11 +10,14 @@ namespace EFCore_DBLibrary
     {
         public AdventureWorksContext()
         {
+            ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
+
         }
 
         public AdventureWorksContext(DbContextOptions<AdventureWorksContext> options)
             : base(options)
         {
+            ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
         }
 
         public virtual DbSet<Address> Addresses { get; set; }
