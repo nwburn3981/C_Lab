@@ -16,5 +16,10 @@ namespace InventoryBusinessLayer
         List<GetItemsForListingDto> GetItemsForListingFromProcedure();
         string GetAllItemsPipeDelimitedString();
         List<FullItemDetailDto> GetItemsWithGenresAndCategories();
+
+        int UpsertItem(CreateOrUpdateItemDto item);
+        void UpsertItems(List<CreateOrUpdateItemDto> items);
+        void DeleteItem(int id);
+        void DeleteItems(List<int> itemIds);
     }
 }
