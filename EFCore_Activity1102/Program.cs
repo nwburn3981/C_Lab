@@ -2,10 +2,12 @@
 using EFCore_DBLibrary;
 using InventoryBusinessLayer;
 using InventoryHelpers;
+using InventoryModels.DTOs;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace EFCore_Activity1102
@@ -19,6 +21,7 @@ namespace EFCore_Activity1102
         private static IServiceProvider _serviceProvider;
         private static IItemsService _itemsService;
         private static ICategoriesService _categoriesService;
+        private static List<CategoryDto> _categories;
 
         public static void Main(string[] args)
         {
@@ -35,6 +38,18 @@ namespace EFCore_Activity1102
                 GetFullItemDetails();
                 GetItemsForListingLinq();
                 ListCategoriesAndColors();
+
+                Console.WriteLine("Would you like to create items?");
+                var createItems = Console.ReadLine().StartsWith("y", StringComparison.
+                OrdinalIgnoreCase);
+                if (createItems)
+                {
+                    Console.WriteLine("Adding new Item(s)");
+                    CreateMultipleItems();
+                    Console.WriteLine("Items added");
+                    var inventory = _itemsService.GetItems();
+                    inventory.ForEach(x => Console.WriteLine($"Item: {x}"));
+                }
             }
         }
 
@@ -130,6 +145,67 @@ namespace EFCore_Activity1102
             foreach (var c in results)
             {
                 Console.WriteLine($"Category [{c.Category}] is {c.CategoryDetail.Color}");
+            }
+            _categories = results;
+        }
+
+        private static void CreateMultipleItems()
+        {
+            Console.WriteLine("Would you like to create items as a batch?");
+            bool batchCreate = Console.ReadLine().StartsWith("y", StringComparison.
+            OrdinalIgnoreCase);
+            var allItems = new List<CreateOrUpdateItemDto>();
+            bool createAnother = true;
+            while (createAnother == true)
+            {
+                var newItem = new CreateOrUpdateItemDto();
+                Console.WriteLine("Creating a new item.");
+                Console.WriteLine("Please enter the name");
+                newItem.Name = Console.ReadLine();
+                Console.WriteLine("Please enter the description");
+                newItem.Description = Console.ReadLine();
+                Console.WriteLine("Please enter the notes");
+                newItem.Notes = Console.ReadLine();
+                Console.WriteLine("Please enter the Category [B]ooks, [M]ovies, [G]ames");
+                newItem.CategoryId = GetCategoryId(Console.ReadLine().Substring(0,
+                1).ToUpper());
+
+                if (!batchCreate)
+                {
+                    _itemsService.UpsertItem(newItem);
+                }
+                else
+                {
+                    allItems.Add(newItem);
+                }
+                Console.WriteLine("Would you like to create another item?");
+                createAnother = Console.ReadLine().StartsWith("y",
+                StringComparison.OrdinalIgnoreCase);
+
+            if (batchCreate && !createAnother)
+                {
+                    _itemsService.UpsertItems(allItems);
+                }
+            }
+        }
+
+        private static int GetCategoryId(string input)
+        {
+
+
+            switch (input)
+            {
+                case "B":
+                    return _categories.FirstOrDefault(x => x.Category.ToLower().
+                    Equals("books"))?.Id ?? -1;
+                case "M":
+                    return _categories.FirstOrDefault(x => x.Category.ToLower().
+                    Equals("movies"))?.Id ?? -1;
+                case "G":
+                    return _categories.FirstOrDefault(x => x.Category.ToLower().
+                    Equals("games"))?.Id ?? -1;
+            default:
+                    return -1;
             }
         }
     }
