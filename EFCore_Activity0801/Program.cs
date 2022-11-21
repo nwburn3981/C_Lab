@@ -37,7 +37,7 @@ namespace EFCore_Activity0801
         {
             using (var db = AdventureWorksContext(_optionsBuilder.Options))
             {
-                var people = db.People.ToList().OrderByDescending(x => x.LastName);
+                var people = db.People.AsNoTracking.ToList().OrderByDescending(x => x.LastName);
                 foreach (var person in people.Take(10))
                 {
                     Console.WriteLine($"{person.FirstName} {person.LastName}");
@@ -49,7 +49,7 @@ namespace EFCore_Activity0801
         {
             using (var db = AdventureWorksContext(_optionsBuilder.Options))
             {
-                var query = db.People.OrderByDescending(x => x.LastName);
+                var query = db.People.AsNoTracking.OrderByDescending(x => x.LastName);
                 var result = query.Take(10);
 
                 foreach (var person in result)
@@ -64,7 +64,7 @@ namespace EFCore_Activity0801
             using (var db = AdventureWorksContext(_optionsBuilder.Options))
             {
                 var searchTerm = filter.ToLower();
-                var query = db.People.Where(x => x.LastName.ToLower().Contains(searchTerm) || x.FirstName.ToLower().Contains(searchTerm)
+                var query = db.People.AsNoTracking.Where(x => x.LastName.ToLower().Contains(searchTerm) || x.FirstName.ToLower().Contains(searchTerm)
                  || x.PersonType.ToLower().Equals(searchTerm));
 
                 foreach (var person in query)
@@ -79,7 +79,7 @@ namespace EFCore_Activity0801
             using (var db = AdventureWorksContext(_optionsBuilder.Options))
             {
                 var searchTerm = filter.ToLower();
-                var query = db.People.Where(x => x.LastName.ToLower().Contains(searchTerm) || x.FirstName.ToLower().Contains(searchTerm)
+                var query = db.People.AsNoTracking.Where(x => x.LastName.ToLower().Contains(searchTerm) || x.FirstName.ToLower().Contains(searchTerm)
                  || x.PersonType.ToLower().Equals(searchTerm))
                     .OrderBy(x => x.LastName)
                     .Skip(pageNumber * pageSize)
