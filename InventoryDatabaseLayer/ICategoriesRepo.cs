@@ -1,4 +1,5 @@
-﻿using System;
+﻿using InventoryModels.DTOs;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,7 +7,9 @@ using System.Threading.Tasks;
 
 namespace InventoryDatabaseLayer
 {
-    internal interface ICategoriesRepo
+    public interface ICategoriesRepo
     {
+
+        List<CategoryDto> ListCategoriesAndDetails();
     }
 }
