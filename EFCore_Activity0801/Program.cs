@@ -4,6 +4,7 @@ using InventoryHelpers;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 
 namespace EFCore_Activity0801
 {
@@ -15,10 +16,14 @@ namespace EFCore_Activity0801
         static void Main(string[] args)
         {
             BuildOptions();
-            Console.WriteLine("List People Then Order And Take");
-            ListPeopleThenOrderAndTake();
-            Console.WriteLine("Query People, order, then list and take");
-            QueryPeopleOrderedToListAndTake();
+           // Console.WriteLine("List People Then Order And Take");
+           // ListPeopleThenOrderAndTake();
+           // Console.WriteLine("Query People, order, then list and take");
+           // QueryPeopleOrderedToListAndTake();
+
+            Console.WriteLine("Please Enter the partial First or Last Name, or the Person Type to searech for:");
+            var result = Console.ReadLine();
+            FilteredPeople(result);
         }
 
         private static void ListPeopleThenOrderAndTake()
@@ -43,6 +48,21 @@ namespace EFCore_Activity0801
                 foreach (var person in result)
                 {
                     Console.WriteLine($"{person.FirstName} {person.LastName}");
+                }
+            }
+        }
+
+        private static void FilteredPeople(string filter)
+        {
+            using (var db = AdventureWorksContext(_optionsBuilder.Options))
+            {
+                var searchTerm = filter.ToLower();
+                var query = db.People.Where(x => x.LastName.ToLower().Contains(searchTerm) || x.FirstName.ToLower().Contains(searchTerm)
+                 || x.PersonType.ToLower().Equals(searchTerm));
+
+                foreach (var person in query)
+                {
+                    Console.WriteLine($"{person.FirstName} {person.LastName}, {person.PersonType}");
                 }
             }
         }
