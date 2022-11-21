@@ -23,7 +23,14 @@ namespace EFCore_Activity0801
 
             Console.WriteLine("Please Enter the partial First or Last Name, or the Person Type to searech for:");
             var result = Console.ReadLine();
-            FilteredPeople(result);
+            //FilteredPeople(result);
+
+            int pageSize = 10;
+            for (int pageNumber = 0; pageNumber < 10; pageNumber++)
+            {
+                Console.WriteLine($"Page {pageNumber + 1}");
+                FilteredAndPagedResult(result, pageNumber, pageSize);
+            }
         }
 
         private static void ListPeopleThenOrderAndTake()
@@ -59,6 +66,24 @@ namespace EFCore_Activity0801
                 var searchTerm = filter.ToLower();
                 var query = db.People.Where(x => x.LastName.ToLower().Contains(searchTerm) || x.FirstName.ToLower().Contains(searchTerm)
                  || x.PersonType.ToLower().Equals(searchTerm));
+
+                foreach (var person in query)
+                {
+                    Console.WriteLine($"{person.FirstName} {person.LastName}, {person.PersonType}");
+                }
+            }
+        }
+
+        private static void FilteredAndPagedResult(string filter, int pageNumber, int pageSize)
+        {
+            using (var db = AdventureWorksContext(_optionsBuilder.Options))
+            {
+                var searchTerm = filter.ToLower();
+                var query = db.People.Where(x => x.LastName.ToLower().Contains(searchTerm) || x.FirstName.ToLower().Contains(searchTerm)
+                 || x.PersonType.ToLower().Equals(searchTerm))
+                    .OrderBy(x => x.LastName)
+                    .Skip(pageNumber * pageSize)
+                    .Take(pageSize);
 
                 foreach (var person in query)
                 {
